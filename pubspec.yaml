@@ -1,0 +1,46 @@
+name: kiddylingo
+description: KiddyLingo Adventure - Fun Learning App for Kids
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+     
+  # State management
+  provider: ^6.1.1
+
+  # Text to speech
+  flutter_tts: ^4.0.2
+
+  # Network images
+  cached_network_image: ^3.3.1
+
+  # Local storage
+  shared_preferences: ^2.2.2
+
+  # Animations
+  lottie: ^3.0.0
+  animate_do: ^3.3.4
+
+  # Confetti
+  confetti: ^0.7.0
+  
+  # Google Fonts
+  google_fonts: ^6.1.0
+  speech_to_text: ^7.3.0
+  dotlottie_flutter: ^0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  
+  
+    
