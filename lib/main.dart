@@ -13,7 +13,6 @@ import 'package:kiddylingo/screens/learn_screen/learn_screen.dart';
 
 import 'providers/app_provider.dart';
 import 'models/types.dart';
-import 'screens/splash_screen.dart';
 
 import 'screens/match_screen.dart';
 
@@ -66,7 +65,10 @@ class _AppRouter extends StatelessWidget {
         opacity: animation,
         child: child,
       ),
-      child: _buildView(view),
+      child: AbsorbPointer(
+        absorbing: false,
+        child: _buildView(view),
+      ),
     );
   }
 

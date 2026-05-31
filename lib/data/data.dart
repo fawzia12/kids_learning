@@ -11,176 +11,154 @@ const List<LearningItem> learningData = [
       description: 'Apple',
       phonetic: 'Ay',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/a.jpg'),
   LearningItem(
       id: 'a2',
       name: 'B',
       description: 'Ball',
       phonetic: 'Bee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1515091943-9d5c0ad68ce7?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/b.webp'),
   LearningItem(
       id: 'a3',
       name: 'C',
       description: 'Cat',
       phonetic: 'See',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/c.jpg'),
   LearningItem(
       id: 'a4',
       name: 'D',
       description: 'Dog',
       phonetic: 'Dee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/d.jpg'),
   LearningItem(
       id: 'a5',
       name: 'E',
       description: 'Egg',
       phonetic: 'Ee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1587486913049-53fc88980fa1?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/e.jpg'),
   LearningItem(
       id: 'a6',
       name: 'F',
       description: 'Fish',
       phonetic: 'Ef',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/f.jpg'),
   LearningItem(
       id: 'a7',
       name: 'G',
       description: 'Goat',
       phonetic: 'Jee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/g.jpg'),
   LearningItem(
       id: 'a8',
       name: 'H',
       description: 'Hat',
       phonetic: 'Aych',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/h.jpeg'),
   LearningItem(
       id: 'a9',
       name: 'I',
       description: 'Ice',
       phonetic: 'Eye',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1549603588-444a703d1911?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/i.jpg'),
   LearningItem(
       id: 'a10',
       name: 'J',
       description: 'Jam',
       phonetic: 'Jay',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1627521746244-64b52b27072a?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/j.jpeg'),
   LearningItem(
       id: 'a11',
       name: 'K',
       description: 'Key',
       phonetic: 'Kay',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1582878696312-d98c25515797?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/k.webp'),
   LearningItem(
       id: 'a12',
       name: 'L',
       description: 'Lion',
       phonetic: 'El',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/l.jpeg'),
   LearningItem(
       id: 'a13',
       name: 'M',
       description: 'Moon',
       phonetic: 'Em',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1532693322450-2cb5c511067d?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/m.jpeg'),
   LearningItem(
       id: 'a14',
       name: 'N',
       description: 'Net',
       phonetic: 'En',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1525381655077-f28a364be1df?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/n.jpg'),
   LearningItem(
       id: 'a15',
       name: 'O',
       description: 'Owl',
       phonetic: 'Oh',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1510777558237-67c74239855b?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/o.jpg'),
   LearningItem(
       id: 'a16',
       name: 'P',
-      description: 'Pig',
+      description: 'Panda',
       phonetic: 'Pee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1541604514-6338b00a7473?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/p.jpeg'),
   LearningItem(
       id: 'a17',
       name: 'Q',
       description: 'Queen',
       phonetic: 'Cue',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/q.png'),
   LearningItem(
       id: 'a18',
       name: 'R',
-      description: 'Red',
+      description: 'Rabit',
       phonetic: 'Ar',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1563200922-8370777fa68b?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/r.webp'),
   LearningItem(
       id: 'a19',
       name: 'S',
       description: 'Sun',
       phonetic: 'Es',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1563294379-3d12d1b0922c?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/s.jpg'),
   LearningItem(
       id: 'a20',
       name: 'T',
       description: 'Toy',
       phonetic: 'Tee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/t.png'),
   LearningItem(
       id: 'a21',
       name: 'U',
       description: 'Umbrella',
       phonetic: 'You',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1555530171-86008638b99d?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/u.png'),
   LearningItem(
       id: 'a22',
       name: 'V',
       description: 'Van',
       phonetic: 'Vee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1532585626243-7f369df9b3e0?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/v.png'),
   LearningItem(
       id: 'a23',
       name: 'W',
@@ -192,33 +170,30 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'a24',
       name: 'X',
-      description: 'Box',
+      description: 'ex-ray',
       phonetic: 'Ex',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1589314782049-5777a87e5025?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/x.jpeg'),
   LearningItem(
       id: 'a25',
       name: 'Y',
       description: 'Yo-yo',
       phonetic: 'Why',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1563723326-80962323c289?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/y.png'),
   LearningItem(
       id: 'a26',
       name: 'Z',
       description: 'Zoo',
       phonetic: 'Zee',
       category: Category.alphabet,
-      image:
-          'https://images.unsplash.com/photo-1552431792-7104be66383b?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/abc letters/z.png'),
 
   // --- ANIMALS ---
   LearningItem(
       id: 'ani_ant',
       name: 'Ant',
-      description: 'Tiny but strong',
+      description: '',
       phonetic: 'Ant',
       category: Category.animals,
       image:
@@ -226,7 +201,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_bear',
       name: 'Bear',
-      description: 'Big and fuzzy',
+      description: '',
       phonetic: 'Bair',
       category: Category.animals,
       image:
@@ -234,7 +209,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_cat',
       name: 'Cat',
-      description: 'Purrs and meows',
+      description: '',
       phonetic: 'Kat',
       category: Category.animals,
       image:
@@ -242,7 +217,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_dog',
       name: 'Dog',
-      description: 'Our best friend',
+      description: '',
       phonetic: 'Dog',
       category: Category.animals,
       image:
@@ -250,7 +225,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_ele',
       name: 'Elephant',
-      description: 'Long trunk and ears',
+      description: '',
       phonetic: 'El-uh-funt',
       category: Category.animals,
       image:
@@ -258,7 +233,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_fox',
       name: 'Fox',
-      description: 'Clever and red',
+      description: '',
       phonetic: 'Fox',
       category: Category.animals,
       image:
@@ -266,7 +241,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_gir',
       name: 'Giraffe',
-      description: 'Very long neck',
+      description: '',
       phonetic: 'Juh-raff',
       category: Category.animals,
       image:
@@ -274,7 +249,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_hor',
       name: 'Horse',
-      description: 'Fast and strong',
+      description: '',
       phonetic: 'Hors',
       category: Category.animals,
       image:
@@ -282,7 +257,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_lio',
       name: 'Lion',
-      description: 'King of the jungle',
+      description: '',
       phonetic: 'Ly-on',
       category: Category.animals,
       image:
@@ -290,7 +265,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_mon',
       name: 'Monkey',
-      description: 'Swings from trees',
+      description: '',
       phonetic: 'Munk-ee',
       category: Category.animals,
       image:
@@ -298,7 +273,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_pan',
       name: 'Panda',
-      description: 'Loves eating bamboo',
+      description: '',
       phonetic: 'Pan-duh',
       category: Category.animals,
       image:
@@ -306,7 +281,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_rab',
       name: 'Rabbit',
-      description: 'Long ears and hops',
+      description: '',
       phonetic: 'Rab-it',
       category: Category.animals,
       image:
@@ -314,7 +289,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_tig',
       name: 'Tiger',
-      description: 'Big striped cat',
+      description: '',
       phonetic: 'Ty-ger',
       category: Category.animals,
       image:
@@ -322,7 +297,7 @@ const List<LearningItem> learningData = [
   LearningItem(
       id: 'ani_zeb',
       name: 'Zebra',
-      description: 'Black and white stripes',
+      description: '',
       phonetic: 'Zee-bra',
       category: Category.animals,
       image:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dotlottie_flutter/dotlottie_flutter.dart';
+import 'package:lottie/lottie.dart';
 import '../providers/app_provider.dart';
 
 class BuddyWidget extends StatefulWidget {
@@ -33,6 +33,7 @@ class _BuddyWidgetState extends State<BuddyWidget>
   late Animation<double> _sleepAnim;
 
   String _lastMood = 'idle';
+  bool _lottieError = false;
 
   @override
   void initState() {
@@ -138,6 +139,84 @@ class _BuddyWidgetState extends State<BuddyWidget>
     super.dispose();
   }
 
+  Widget _buildLottie(String assetPath) {
+    if (_lottieError || assetPath.isEmpty) {
+      return Center(
+        child: Text('🦊', style: TextStyle(fontSize: widget.size * 0.9)),
+      );
+    }
+    Widget lottieWidget;
+    if (assetPath.startsWith('http')) {
+      lottieWidget = Lottie.network(
+        assetPath,
+        key: ValueKey(assetPath),
+        decoder: LottieComposition.decodeZip,
+        animate: true,
+        repeat: true,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) {
+          if (mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) setState(() => _lottieError = true);
+            });
+          }
+          return Center(
+            child: Text('🦊', style: TextStyle(fontSize: widget.size * 0.9)),
+          );
+        },
+        frameBuilder: (ctx, child, composition) {
+          if (composition == null) {
+            return Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: const Color(0xFF58CC02),
+                ),
+              ),
+            );
+          }
+          return child;
+        },
+      );
+    } else {
+      lottieWidget = Lottie.asset(
+        assetPath,
+        key: ValueKey(assetPath),
+        animate: true,
+        repeat: true,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) {
+          if (mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) setState(() => _lottieError = true);
+            });
+          }
+          return Center(
+            child: Text('🦊', style: TextStyle(fontSize: widget.size * 0.9)),
+          );
+        },
+        frameBuilder: (ctx, child, composition) {
+          if (composition == null) {
+            return Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: const Color(0xFF58CC02),
+                ),
+              ),
+            );
+          }
+          return child;
+        },
+      );
+    }
+    return lottieWidget;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
@@ -187,7 +266,12 @@ class _BuddyWidgetState extends State<BuddyWidget>
                 _sadCtrl,
                 _sleepCtrl,
               ]),
-              builder: (_, __) {
+              child: SizedBox(
+                width: widget.size * 1.5,
+                height: widget.size * 1.5,
+                child: _buildLottie(assetPath),
+              ),
+              builder: (_, child) {
                 double dy = 0;
                 double scale = 1.0;
                 double rotate = 0;
@@ -225,17 +309,7 @@ class _BuddyWidgetState extends State<BuddyWidget>
                     scale: scale,
                     child: Transform.rotate(
                       angle: rotate,
-                      child: SizedBox(
-                        width: widget.size * 1.5,
-                        height: widget.size * 1.5,
-                        child: DotLottieView(
-                          sourceType: 'url',
-                          source: assetPath,
-                          autoplay: true,
-                          loop: true,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
+                      child: child,
                     ),
                   ),
                 );
@@ -258,24 +332,6 @@ class _BuddyWidgetState extends State<BuddyWidget>
         ),
       ),
     );
-  }
-
-  Color _bubbleColor(String mood) {
-    switch (mood) {
-      case 'celebrating':
-      case 'happy':
-        return const Color(0xFFD7FFB8);
-      case 'excited':
-        return const Color(0xFFFFF3C4);
-      case 'sad':
-        return const Color(0xFFFFE0E0);
-      case 'sleeping':
-        return const Color(0xFFE0EAFF);
-      case 'wave':
-        return const Color(0xFFE0F7FF);
-      default:
-        return const Color(0xFFF0F9FF);
-    }
   }
 
   String _moodBadge(String mood) {

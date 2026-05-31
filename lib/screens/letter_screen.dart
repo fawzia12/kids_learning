@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:kiddylingo/data/data.dart';
 import 'package:kiddylingo/widgets/share_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:dotlottie_flutter/dotlottie_flutter.dart';
 import '../providers/app_provider.dart';
 
 import '../models/types.dart';
@@ -286,7 +285,6 @@ class _QuestCard extends StatelessWidget {
         children: [
           Row(
             children: [
-           
               const Text('⚡', style: TextStyle(fontSize: 28)),
               const SizedBox(width: 12),
               Expanded(
@@ -345,4 +343,3 @@ class _QuestCard extends StatelessWidget {
 }
 
 // ---- Buddies / Friends Screen ----
-

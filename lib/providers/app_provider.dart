@@ -50,7 +50,7 @@ class AppProvider extends ChangeNotifier {
 
   // Character mood and buddy
   String characterMood = 'idle'; // idle, happy, celebrating, sad, talking
-  String selectedBuddy = 'https://lottie.host/10f1c6d6-ea41-46c5-86b0-d692a8163d66/6CcjZm6N8G.lottie';
+  String selectedBuddy = 'assets/character.json';
 
   void selectBuddy(String buddyPath) {
     selectedBuddy = buddyPath;
@@ -144,7 +144,7 @@ class AppProvider extends ChangeNotifier {
     hearts = prefs.getInt('k_hearts') ?? 5;
     streak = prefs.getInt('k_streak') ?? 0;
     totalRightAnswers = prefs.getInt('k_right_answers') ?? 0;
-    selectedBuddy = prefs.getString('k_buddy') ?? 'https://lottie.host/10f1c6d6-ea41-46c5-86b0-d692a8163d66/6CcjZm6N8G.lottie';
+    selectedBuddy = prefs.getString('k_buddy') ?? 'assets/character.json';
     final progressJson = prefs.getString('k_progress');
     if (progressJson != null) {
       userProgress = UserProgress.fromJson(jsonDecode(progressJson));

@@ -189,7 +189,7 @@ class UnitSection extends StatelessWidget {
                   final x = pos.dx * width;
                   final y = pos.dy;
 
-                  return [
+                  final widgets = [
                     Positioned(
                       left: x - 28,
                       top: y - 28,
@@ -206,13 +206,20 @@ class UnitSection extends StatelessWidget {
                                 .startSession(category, stepIdx),
                       ),
                     ),
-                    if (isActive)
-                      Positioned(
-                        left: 16,
-                        top: y - 50,
-                        child: const BuddyWidget(size: 100),
-                      ),
                   ];
+                  
+                  // Show buddy only when this node is active
+                  if (isActive) {
+                    widgets.add(
+                      Positioned(
+                        left: -50,
+                        top: y - 40,
+                        child: const BuddyWidget(size: 120),
+                      ),
+                    );
+                  }
+                  
+                  return widgets;
                 }),
               ],
             );
@@ -286,7 +293,7 @@ class _StepNodeState extends State<_StepNode>
       builder: (_, __) => Transform.translate(
         offset: Offset(0, widget.isActive ? _bounceAnim.value : 0),
         child: GestureDetector(
-          onTap: widget.onTap,
+          onTapDown: widget.onTap != null ? (_) => widget.onTap!() : null,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

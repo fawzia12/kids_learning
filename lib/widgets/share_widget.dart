@@ -244,21 +244,33 @@ class KiddyImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.zero,
-      child: CachedNetworkImage(
-        imageUrl: url,
-        width: width,
-        height: height,
-        fit: fit,
-        placeholder: (_, __) => Container(
-          color: const Color(0xFFF1F5F9),
-          child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-        ),
-        errorWidget: (_, __, ___) => Container(
-          color: const Color(0xFFF1F5F9),
-          child: const Icon(Icons.image_not_supported_outlined,
-              color: Colors.grey),
-        ),
-      ),
+      child: url.startsWith('http')
+          ? CachedNetworkImage(
+              imageUrl: url,
+              width: width,
+              height: height,
+              fit: fit,
+              placeholder: (_, __) => Container(
+                color: const Color(0xFFF1F5F9),
+                child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              ),
+              errorWidget: (_, __, ___) => Container(
+                color: const Color(0xFFF1F5F9),
+                child: const Icon(Icons.image_not_supported_outlined,
+                    color: Colors.grey),
+              ),
+            )
+          : Image.asset(
+              url,
+              width: width,
+              height: height,
+              fit: fit,
+              errorBuilder: (_, __, ___) => Container(
+                color: const Color(0xFFF1F5F9),
+                child: const Icon(Icons.image_not_supported_outlined,
+                    color: Colors.grey),
+              ),
+            ),
     );
   }
 }

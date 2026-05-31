@@ -1,4 +1,4 @@
-import 'package:dotlottie_flutter/dotlottie_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:kiddylingo/providers/app_provider.dart';
 import 'package:kiddylingo/widgets/share_widget.dart';
@@ -10,15 +10,13 @@ class BuddiesScreen extends StatelessWidget {
   final List<Map<String, String>> heroes = const [
     {
       'id': 'Fox',
-      'asset':
-          'https://lottie.host/10f1c6d6-ea41-46c5-86b0-d692a8163d66/6CcjZm6N8G.lottie',
+      'asset': 'assets/character.json',
       'name': 'Fox',
       'message': "Let's go on an adventure!"
     },
     {
       'id': 'Super Fox',
-      'asset':
-          'https://lottie.host/b3ea8052-84b6-414f-a0d9-786e0b1cbed9/WrfD8xixH1.lottie',
+      'asset': 'assets/a.json',
       'name': 'Super Fox',
       'message': "I'm ready to learn!"
     },
@@ -63,11 +61,14 @@ class BuddiesScreen extends StatelessWidget {
                       itemCount: heroes.length,
                       itemBuilder: (_, idx) {
                         final hero = heroes[idx];
+                        final asset = hero['asset'] ?? '';
                         final isSelected =
-                            provider.selectedBuddy == hero['asset'];
+                            provider.selectedBuddy == asset;
                         return GestureDetector(
                           onTap: () {
-                            provider.selectBuddy(hero['asset']!);
+                            if (asset.isNotEmpty) {
+                              provider.selectBuddy(asset);
+                            }
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
@@ -96,18 +97,11 @@ class BuddiesScreen extends StatelessWidget {
                                 SizedBox(
                                   height: 70,
                                   width: 70,
-                                  child: DotLottieView(
-                                    key: ValueKey(hero['asset']),
-                                    sourceType: 'url',
-                                    source: hero['asset']!,
-                                    autoplay: true,
-                                    loop: true,
-                                    fit: BoxFit.contain,
-                                  ),
+                                  child: _BuddyThumbnail(asset: asset),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  hero['name']!.toUpperCase(),
+                                  (hero['name'] ?? '').toUpperCase(),
                                   style: TextStyle(
                                     fontFamily: 'Fredoka',
                                     fontSize: 15,
@@ -133,5 +127,93 @@ class BuddiesScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Stateful thumbnail so each card manages its own error state independently.
+class _BuddyThumbnail extends StatefulWidget {
+  final String asset;
+  const _BuddyThumbnail({required this.asset});
+
+  @override
+  State<_BuddyThumbnail> createState() => _BuddyThumbnailState();
+}
+
+class _BuddyThumbnailState extends State<_BuddyThumbnail> {
+  bool _error = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_error || widget.asset.isEmpty) {
+      return const Center(
+        child: Text('🦊', style: TextStyle(fontSize: 40)),
+      );
+    }
+    Widget lottieWidget;
+    if (widget.asset.startsWith('http')) {
+      lottieWidget = Lottie.network(
+        widget.asset,
+        key: ValueKey(widget.asset),
+        decoder: LottieComposition.decodeZip,
+        animate: true,
+        repeat: true,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _error = true);
+          });
+          return const Center(
+            child: Text('🦊', style: TextStyle(fontSize: 40)),
+          );
+        },
+        frameBuilder: (ctx, child, composition) {
+          if (composition == null) {
+            return const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0xFF58CC02),
+                ),
+              ),
+            );
+          }
+          return child;
+        },
+      );
+    } else {
+      lottieWidget = Lottie.asset(
+        widget.asset,
+        key: ValueKey(widget.asset),
+        animate: true,
+        repeat: true,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _error = true);
+          });
+          return const Center(
+            child: Text('🦊', style: TextStyle(fontSize: 40)),
+          );
+        },
+        frameBuilder: (ctx, child, composition) {
+          if (composition == null) {
+            return const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0xFF58CC02),
+                ),
+              ),
+            );
+          }
+          return child;
+        },
+      );
+    }
+    return lottieWidget;
   }
 }

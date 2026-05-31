@@ -62,7 +62,7 @@ class _StepNodeState extends State<StepNode>
       builder: (_, __) => Transform.translate(
         offset: Offset(0, widget.isActive ? _bounceAnim.value : 0),
         child: GestureDetector(
-          onTap: widget.onTap,
+          onTapDown: widget.onTap != null ? (_) => widget.onTap!() : null,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
