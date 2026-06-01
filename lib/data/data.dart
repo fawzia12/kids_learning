@@ -196,112 +196,98 @@ const List<LearningItem> learningData = [
       description: '',
       phonetic: 'Ant',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1599386762391-49272d4c0649?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/a.webp'),
   LearningItem(
       id: 'ani_bear',
       name: 'Bear',
       description: '',
       phonetic: 'Bair',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1573920111312-130f680d18bc?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/b.jpeg'),
   LearningItem(
       id: 'ani_cat',
-      name: 'Cat',
+      name: 'Cow',
       description: '',
-      phonetic: 'Kat',
+      phonetic: 'Kawo',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/c.jpeg'),
   LearningItem(
       id: 'ani_dog',
       name: 'Dog',
       description: '',
       phonetic: 'Dog',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/d.jpg'),
   LearningItem(
       id: 'ani_ele',
       name: 'Elephant',
       description: '',
       phonetic: 'El-uh-funt',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/e.jpg'),
   LearningItem(
       id: 'ani_fox',
       name: 'Fox',
       description: '',
       phonetic: 'Fox',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1474511320723-9a56873867b5?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/f.jpeg'),
   LearningItem(
       id: 'ani_gir',
       name: 'Giraffe',
       description: '',
       phonetic: 'Juh-raff',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/g.jpg'),
   LearningItem(
       id: 'ani_hor',
       name: 'Horse',
       description: '',
       phonetic: 'Hors',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/h.webp'),
   LearningItem(
       id: 'ani_lio',
       name: 'Lion',
       description: '',
       phonetic: 'Ly-on',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/l.jpeg'),
   LearningItem(
       id: 'ani_mon',
       name: 'Monkey',
       description: '',
       phonetic: 'Munk-ee',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/m.jpeg'),
   LearningItem(
       id: 'ani_pan',
       name: 'Panda',
       description: '',
       phonetic: 'Pan-duh',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1564349683136-77e08bef1ed1?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/p.jpeg'),
   LearningItem(
       id: 'ani_rab',
       name: 'Rabbit',
       description: '',
       phonetic: 'Rab-it',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1555169062-013468b47731?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/r.webp'),
   LearningItem(
       id: 'ani_tig',
       name: 'Tiger',
       description: '',
       phonetic: 'Ty-ger',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1508817628294-5a453fa0b8fb?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/t.jpeg'),
   LearningItem(
       id: 'ani_zeb',
       name: 'Zebra',
       description: '',
       phonetic: 'Zee-bra',
       category: Category.animals,
-      image:
-          'https://images.unsplash.com/photo-1501705388883-4ed8a543392c?auto=format&fit=crop&w=600&q=80'),
+      image: 'assets/animals/z.jpg'),
 
   // --- SEA ANIMALS ---
   LearningItem(

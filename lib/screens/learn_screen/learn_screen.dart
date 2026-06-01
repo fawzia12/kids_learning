@@ -64,168 +64,183 @@ class _LearnScreenState extends State<LearnScreen>
             Positioned.fill(
               child: Column(
                 children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 24, 0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.close,
-                            size: 28, color: Color(0xFFAFAFAF)),
-                        onPressed: () => provider.goHome(),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: KiddyProgressBar(current: current, total: total),
-                      ),
-                      const SizedBox(width: 16),
-                      const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.favorite,
-                              color: Color(0xFFFF4B4B), size: 26),
-                          SizedBox(width: 6),
-                          Text(
-                            '5',
-                            style: TextStyle(
-                                fontFamily: 'Fredoka',
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xFFFF4B4B)),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 24, 0),
+                    child: Row(
                       children: [
-                        const SizedBox(height: 36),
-                        Text(
-                          _getInstruction(type).toUpperCase(),
-                          style: const TextStyle(
-                              fontFamily: 'Fredoka',
-                              fontSize: 28,
-                              fontWeight: FontWeight.w900,
-                              color: Color(0xFF4B4B4B),
-                              letterSpacing: 0.2),
+                        IconButton(
+                          icon: const Icon(Icons.close,
+                              size: 28, color: Color(0xFFAFAFAF)),
+                          onPressed: () => provider.goHome(),
                         ),
-                        const SizedBox(height: 32),
-                        ScaleTransition(
-                          scale: _pulseAnim,
-                          child: _LearnCard(
-                              item: item, type: type, catColor: catColor),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child:
+                              KiddyProgressBar(current: current, total: total),
                         ),
-                        const SizedBox(height: 48),
-                        if (isLetterStep)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () => provider.speak(_getPhrase(step),
-                                    slow: true, high: true),
-                                child: Container(
-                                  width: 86,
-                                  height: 76,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF00C2FF),
-                                    borderRadius: BorderRadius.circular(22),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Color(0xFF00A2D6),
-                                          offset: Offset(0, 5))
-                                    ],
-                                  ),
-                                  child: const Icon(Icons.volume_up_rounded,
-                                      color: Colors.white, size: 42),
-                                ),
-                              ),
-                              const SizedBox(width: 24),
-                              Text(
-                                type == StepType.learnLower
-                                    ? item.name.toLowerCase()
-                                    : item.name.toUpperCase(),
+                        const SizedBox(width: 16),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.favorite,
+                                color: Color(0xFFFF4B4B), size: 26),
+                            const SizedBox(width: 6),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 400),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) {
+                                return ScaleTransition(
+                                    scale: animation, child: child);
+                              },
+                              child: Text(
+                                '${provider.hearts}',
+                                key: ValueKey<int>(provider.hearts),
                                 style: const TextStyle(
                                     fontFamily: 'Fredoka',
-                                    fontSize: 54,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.w900,
-                                    color: Color(0xFF4B4B4B)),
+                                    color: Color(0xFFFF4B4B)),
                               ),
-                            ],
-                          )
-                        else if (type == StepType.learn ||
-                            type == StepType.learnWord)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: catColor.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(14),
-                              border:
-                                  Border.all(color: catColor.withOpacity(0.3)),
-                            ),
-                            child: Text(
-                              '/${item.phonetic}/',
-                              style: const TextStyle(
-                                fontFamily: 'Fredoka',
-                                fontSize: 22,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1E293B),
-                              ),
-                            ),
-                          ),
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
-                ),
-                // 3. Updated navigation action layout
-                Padding(
-                  // Added horizontal padding to pull the button away from the screen edges
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Row(
-                    children: [
-                      if (type != StepType.learnUpper &&
-                          type != StepType.learnLower)
-                        // Speak button
-                        Container(
-                          width: 54,
-                          height: 54,
-                          margin: const EdgeInsets.only(right: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                            border: const Border(
-                              bottom: BorderSide(
-                                  color: Color(0xFFE5E5E5), width: 4),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 36),
+                          Text(
+                            _getInstruction(type).toUpperCase(),
+                            style: const TextStyle(
+                                fontFamily: 'Fredoka',
+                                fontSize: 28,
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xFF4B4B4B),
+                                letterSpacing: 0.2),
+                          ),
+                          const SizedBox(height: 32),
+                          ScaleTransition(
+                            scale: _pulseAnim,
+                            child: _LearnCard(
+                                item: item, type: type, catColor: catColor),
+                          ),
+                          const SizedBox(height: 48),
+                          if (isLetterStep)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => provider.speak(_getPhrase(step),
+                                      slow: true, high: true),
+                                  child: Container(
+                                    width: 86,
+                                    height: 76,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF00C2FF),
+                                      borderRadius: BorderRadius.circular(22),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            color: Color(0xFF00A2D6),
+                                            offset: Offset(0, 5))
+                                      ],
+                                    ),
+                                    child: const Icon(Icons.volume_up_rounded,
+                                        color: Colors.white, size: 42),
+                                  ),
+                                ),
+                                const SizedBox(width: 24),
+                                Text(
+                                  type == StepType.learnLower
+                                      ? item.name.toLowerCase()
+                                      : item.name.toUpperCase(),
+                                  style: const TextStyle(
+                                      fontFamily: 'Fredoka',
+                                      fontSize: 54,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFF4B4B4B)),
+                                ),
+                              ],
+                            )
+                          else if (type == StepType.learn ||
+                              type == StepType.learnWord)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 188, 232, 254),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: const Border(
+                                      bottom: BorderSide(
+                                          color: Color(0xFFE5E5E5), width: 4),
+                                    ),
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.volume_up_rounded,
+                                        color: Color.fromARGB(255, 5, 167, 241),
+                                        size: 28),
+                                    onPressed: () {
+                                      provider.speak(_getPhrase(step),
+                                          fast: true);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: catColor.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                        color: catColor.withOpacity(0.3)),
+                                  ),
+                                  child: Text(
+                                    '/${item.phonetic}/',
+                                    style: const TextStyle(
+                                      fontFamily: 'Fredoka',
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF1E293B),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // 3. Updated navigation action layout
+                  Padding(
+                    // Added horizontal padding to pull the button away from the screen edges
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            // Ensure the button width is controlled by the parent padding
+                            height: 54,
+                            child: DuoButton(
+                              label: 'NEXT',
+                              color: const Color(0xFF58CC02),
+                              shadowColor: const Color(0xFF46A302),
+                              onTap: provider.advanceStep,
                             ),
                           ),
-                          child: IconButton(
-                            icon: const Icon(Icons.volume_up_rounded,
-                                color: Color(0xFF1CB0F6)),
-                            onPressed: () {
-                              provider.speak(_getPhrase(step), fast: true);
-                            },
-                          ),
                         ),
-                      Expanded(
-                        child: SizedBox(
-                          // Ensure the button width is controlled by the parent padding
-                          height: 54,
-                          child: DuoButton(
-                            label: 'NEXT',
-                            color: const Color(0xFF58CC02),
-                            shadowColor: const Color(0xFF46A302),
-                            onTap: provider.advanceStep,
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
               ),
             ),
             const Positioned(
@@ -335,7 +350,7 @@ class _LearnCard extends StatelessWidget {
               url: item.image,
               width: double.infinity,
               height: 180,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
           const SizedBox(height: 16),

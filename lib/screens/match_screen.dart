@@ -7,15 +7,23 @@ import '../providers/app_provider.dart';
 import '../models/types.dart';
 import '../widgets/buddy_widget.dart';
 
-class MatchScreen extends StatelessWidget {
+class MatchScreen extends StatefulWidget {
   final bool isChallenge;
   const MatchScreen({super.key, this.isChallenge = false});
+
+  @override
+  State<MatchScreen> createState() => _MatchScreenState();
+}
+
+class _MatchScreenState extends State<MatchScreen> {
+  String? _lastSpokenItemId;
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final step = provider.currentStep;
-    if (step?.item == null || step?.options == null) return const SizedBox.shrink();
+    if (step?.item == null || step?.options == null)
+      return const SizedBox.shrink();
 
     final item = step!.item!;
     final options = step.options!;
@@ -25,138 +33,172 @@ class MatchScreen extends StatelessWidget {
     final answered = provider.quizAnswered;
     final correct = provider.quizCorrect;
 
+    if (item.id != _lastSpokenItemId) {
+      _lastSpokenItemId = item.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<AppProvider>().speak(item.category == Category.alphabet
+              ? item.description
+              : item.name);
+        }
+      });
+    }
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F9FF),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
-            Positioned.fill(
-              child: Column(
-                children: [
+            Column(
+              children: [
                 // Progress row
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                   child: Row(
                     children: [
                       IconButton(
                         icon: const Icon(Icons.close, color: Color(0xFF94A3B8)),
                         onPressed: () => provider.goHome(),
                       ),
-                      Expanded(child: KiddyProgressBar(current: current, total: total)),
+                      Expanded(
+                          child:
+                              KiddyProgressBar(current: current, total: total)),
                       const SizedBox(width: 16),
-                      _StatPill(emoji: '❤️', value: '${provider.hearts}', color: const Color(0xFFFF4B4B)),
-                      const SizedBox(width: 12),
+                      _StatPill(
+                          emoji: '❤️',
+                          value: '${provider.hearts}',
+                          color: const Color(0xFFFF4B4B)),
                     ],
                   ),
                 ),
 
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Column(
-                      children: [
-                        Text(
-                          isChallenge ? '🏆 Final Challenge!' : '🍓 Drag & Match',
+                // Question Area
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.category == Category.alphabet
+                              ? item.description
+                              : item.name,
                           style: const TextStyle(
                             fontFamily: 'Fredoka',
-                            fontSize: 24,
+                            fontSize: 32,
                             fontWeight: FontWeight.w800,
                             color: Color(0xFF334155),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Drag fruit to basket 👇',
-                          style: TextStyle(
-                            fontFamily: 'Fredoka',
-                            fontSize: 16,
-                            color: Color(0xFF94A3B8),
-                            fontWeight: FontWeight.w600,
+                      ),
+                      const SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: () => provider.speak(
+                            item.category == Category.alphabet
+                                ? item.description
+                                : item.name),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1CB0F6),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color(0xFF1899D6),
+                                  offset: Offset(0, 4)),
+                            ],
                           ),
+                          child: const Icon(Icons.volume_up_rounded,
+                              color: Colors.white, size: 28),
                         ),
-                        const SizedBox(height: 32),
+                      ),
+                    ],
+                  ),
+                ),
 
-                        // Draggable main item
-                        Draggable<String>(
-                          data: item.id,
-                          feedback: Material(
-                            color: Colors.transparent,
-                            child: _DragItem(url: item.image, isDragging: true),
-                          ),
-                          childWhenDragging: _DragItem(url: item.image, isEmpty: true),
-                          child: _DragItem(url: item.image, isEmpty: answered),
-                        ),
+                // Options Grid
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Center(
+                      child: GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 0.85,
+                        children: options.map((opt) {
+                          final isSelected = provider.selectedAnswer == opt.id;
+                          final isCorrectAnswer = opt.id == item.id;
 
-                        const SizedBox(height: 48),
-
-                        // Options / Baskets
-                        Expanded(
-                          child: GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 1.2,
-                            children: options.map((opt) {
-                              final isSelected = provider.selectedAnswer == opt.id;
-                              final isCorrectAnswer = opt.id == item.id;
-                              
-                              return DragTarget<String>(
-                                builder: (context, candidateData, rejectedData) {
-                                  return _BasketTarget(
-                                    label: opt.category == Category.alphabet ? opt.description : opt.name,
-                                    isHovering: candidateData.isNotEmpty && !answered,
-                                    isAnswered: answered,
-                                    isSelected: isSelected,
-                                    isCorrectAnswer: isCorrectAnswer,
-                                  );
-                                },
-                                onWillAcceptWithDetails: (details) => !answered,
-                                onAcceptWithDetails: (details) {
-                                  if (!answered) {
-                                    provider.selectAnswer(opt.id);
-                                    provider.checkAnswer();
-                                  }
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ),
-
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: Text(
-                            '✨ +5 XP Match',
-                            style: TextStyle(
-                              fontFamily: 'Fredoka',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFFFF9600),
-                            ),
-                          ),
-                        ),
-                      ],
+                          return _TapOption(
+                            url: opt.image,
+                            label: opt.category == Category.alphabet
+                                ? opt.description
+                                : opt.name,
+                            isSelected: isSelected,
+                            isAnswered: answered,
+                            isCorrectAnswer: isCorrectAnswer,
+                            onTap: () {
+                              if (!answered) {
+                                provider.selectAnswer(opt.id);
+                              }
+                            },
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),
-              ],
-              ),
-            ),
 
-            const Positioned(
-              bottom: 80,
-              left: -20,
-              child: BuddyWidget(size: 80),
+                // Fixed Bottom Area
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                        top: BorderSide(color: Color(0xFFE2E8F0), width: 2)),
+                  ),
+                  child: DuoButton(
+                    label: 'CHECK',
+                    color: provider.selectedAnswer != null
+                        ? const Color(0xFF58CC02)
+                        : const Color(0xFFE5E5E5),
+                    shadowColor: provider.selectedAnswer != null
+                        ? const Color(0xFF46A302)
+                        : const Color(0xFFAFAFAF),
+                    textColor: provider.selectedAnswer != null
+                        ? Colors.white
+                        : const Color(0xFFAFAFAF),
+                    onTap: (provider.selectedAnswer != null && !answered)
+                        ? () {
+                            provider.checkAnswer();
+                          }
+                        : null,
+                  ),
+                ),
+              ],
             ),
 
             // Overlays for correct/wrong
             if (answered && correct == true)
               Positioned.fill(
-                child: _SuccessOverlay(provider: provider, itemName: item.category == Category.alphabet ? item.description : item.name),
+                child: _SuccessOverlay(
+                    provider: provider,
+                    itemName: item.category == Category.alphabet
+                        ? item.description
+                        : item.name),
               ),
             if (answered && correct == false)
               Positioned.fill(
-                child: _WrongOverlay(provider: provider, correctName: item.category == Category.alphabet ? item.description : item.name),
+                child: _WrongOverlay(
+                    provider: provider,
+                    correctName: item.category == Category.alphabet
+                        ? item.description
+                        : item.name),
               ),
           ],
         ),
@@ -165,126 +207,87 @@ class MatchScreen extends StatelessWidget {
   }
 }
 
-class _DragItem extends StatelessWidget {
+class _TapOption extends StatelessWidget {
   final String url;
-  final bool isDragging;
-  final bool isEmpty;
-
-  const _DragItem({
-    required this.url,
-    this.isDragging = false,
-    this.isEmpty = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (isEmpty) {
-      return Container(
-        height: 140,
-        width: 140,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: const Color(0xFFE2E8F0), width: 2, style: BorderStyle.none), // Wait, BorderStyle.none makes it invisible. Let's use dashed if we could, but solid is fine.
-        ),
-        alignment: Alignment.center,
-        child: const Icon(Icons.check, color: Color(0xFFCBD5E1), size: 48),
-      );
-    }
-
-    return Container(
-      height: isDragging ? 150 : 140,
-      width: isDragging ? 150 : 140,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x20000000),
-            blurRadius: isDragging ? 24 : 12,
-            offset: isDragging ? const Offset(0, 12) : const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(21),
-        child: KiddyImage(url: url),
-      ),
-    );
-  }
-}
-
-class _BasketTarget extends StatelessWidget {
   final String label;
-  final bool isHovering;
-  final bool isAnswered;
   final bool isSelected;
+  final bool isAnswered;
   final bool isCorrectAnswer;
+  final VoidCallback onTap;
 
-  const _BasketTarget({
+  const _TapOption({
+    required this.url,
     required this.label,
-    required this.isHovering,
-    required this.isAnswered,
     required this.isSelected,
+    required this.isAnswered,
     required this.isCorrectAnswer,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     Color borderColor = const Color(0xFFE2E8F0);
     Color bgColor = Colors.white;
+    Color textColor = const Color(0xFF334155);
 
     if (isAnswered) {
       if (isCorrectAnswer) {
         borderColor = const Color(0xFF58CC02);
         bgColor = const Color(0xFFDCFCE7);
+        textColor = const Color(0xFF16A34A);
       } else if (isSelected && !isCorrectAnswer) {
         borderColor = const Color(0xFFFF4B4B);
         bgColor = const Color(0xFFFFF0F0);
+        textColor = const Color(0xFFDC2626);
+      } else {
+        borderColor = const Color(0xFFE2E8F0);
+        bgColor = Colors.white;
+        textColor = const Color(0xFF94A3B8);
       }
-    } else if (isHovering) {
+    } else if (isSelected) {
       borderColor = const Color(0xFF1CB0F6);
       bgColor = const Color(0xFFE0F7FF);
+      textColor = const Color(0xFF1CB0F6);
     }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor, width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: borderColor.withOpacity(0.3),
-            blurRadius: isHovering ? 12 : 0,
-            offset: isHovering ? const Offset(0, 6) : Offset.zero,
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('🧺', style: TextStyle(fontSize: 32)),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Fredoka',
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: isAnswered
-                  ? (isCorrectAnswer
-                      ? const Color(0xFF16A34A)
-                      : isSelected
-                          ? const Color(0xFFDC2626)
-                          : const Color(0xFF94A3B8))
-                  : const Color(0xFF334155),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: borderColor, width: 3),
+          boxShadow: [
+            if (!isAnswered || isSelected || isCorrectAnswer)
+              BoxShadow(
+                color: borderColor,
+                offset: const Offset(0, 4),
+              ),
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: KiddyImage(url: url),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Fredoka',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: textColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -299,18 +302,10 @@ class _SuccessOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withOpacity(0.6),
+      color: Colors.white.withOpacity(0.9),
       child: Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
+        child: Padding(
           padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: const [
-              BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 10)),
-            ],
-          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -324,20 +319,20 @@ class _SuccessOverlay extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              
-              Text(
+              const Text(
                 '🖼️ ➜ 🧺',
-                style: const TextStyle(fontSize: 40),
+                style: TextStyle(fontSize: 40),
               ),
               const SizedBox(height: 24),
-              
-              _RewardRow(icon: '⭐', text: '+10 XP', color: const Color(0xFFFF9600)),
+              const _RewardRow(
+                  icon: '⭐', text: '+10 XP', color: Color(0xFFFF9600)),
               const SizedBox(height: 12),
-              _RewardRow(icon: '🪙', text: '+5 Coins', color: const Color(0xFFFFC800)),
+              const _RewardRow(
+                  icon: '🪙', text: '+5 Coins', color: Color(0xFFFFC800)),
               const SizedBox(height: 12),
-              _RewardRow(icon: '🔥', text: 'Combo x2', color: const Color(0xFFFF4B4B)),
+              const _RewardRow(
+                  icon: '🔥', text: 'Combo x2', color: Color(0xFFFF4B4B)),
               const SizedBox(height: 24),
-              
               const Text(
                 '🎉 Confetti Pop',
                 style: TextStyle(
@@ -348,7 +343,6 @@ class _SuccessOverlay extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
               DuoButton(
                 label: 'CONTINUE',
                 color: const Color(0xFF58CC02),
@@ -372,18 +366,10 @@ class _WrongOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withOpacity(0.6),
+      color: Colors.white.withOpacity(0.9),
       child: Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
+        child: Padding(
           padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: const [
-              BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 10)),
-            ],
-          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -417,7 +403,6 @@ class _WrongOverlay extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
               DuoButton(
                 label: 'GOT IT',
                 color: const Color(0xFFFF4B4B),
@@ -437,7 +422,8 @@ class _RewardRow extends StatelessWidget {
   final String text;
   final Color color;
 
-  const _RewardRow({required this.icon, required this.text, required this.color});
+  const _RewardRow(
+      {required this.icon, required this.text, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -476,9 +462,8 @@ class _StatPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -224,9 +224,7 @@ class AppProvider extends ChangeNotifier {
         break;
       case StepType.match:
         final matchItems = [...allItems]..shuffle(rng);
-        final limited = category == Category.alphabet
-            ? matchItems.take(6).toList()
-            : matchItems;
+        final limited = matchItems.take(10).toList();
         for (final item in limited) {
           final distractors = allItems.where((i) => i.id != item.id).toList()
             ..shuffle(rng);
@@ -462,11 +460,11 @@ class AppProvider extends ChangeNotifier {
       addGems(5);
       streak++;
       totalRightAnswers++;
-      hearts = (hearts + 1).clamp(0, 5);
+      hearts += 1;
       speakCorrect();
       characterMood = 'celebrating';
     } else {
-      hearts = (hearts - 1).clamp(0, 5);
+      if (hearts > 0) hearts -= 1;
       streak = 0;
       speakWrong();
       characterMood = 'sad';
@@ -533,12 +531,12 @@ class AppProvider extends ChangeNotifier {
       characterMood = 'celebrating';
       addGems(10);
       totalRightAnswers++;
-      hearts = (hearts + 1).clamp(0, 5);
+      hearts += 1;
     } else {
       quizCorrect = false;
       speakWrong();
       characterMood = 'sad';
-      hearts = (hearts - 1).clamp(0, 5);
+      if (hearts > 0) hearts -= 1;
       Future.delayed(const Duration(milliseconds: 1000), () {
         spellingSlots = List.filled(expected.length, null);
         scrambledLetters = scrambledLetters

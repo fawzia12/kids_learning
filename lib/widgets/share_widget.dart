@@ -252,7 +252,8 @@ class KiddyImage extends StatelessWidget {
               fit: fit,
               placeholder: (_, __) => Container(
                 color: const Color(0xFFF1F5F9),
-                child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2)),
               ),
               errorWidget: (_, __, ___) => Container(
                 color: const Color(0xFFF1F5F9),
@@ -275,7 +276,6 @@ class KiddyImage extends StatelessWidget {
   }
 }
 
-// ---- Progress Bar ----
 class KiddyProgressBar extends StatelessWidget {
   final int current;
   final int total;
@@ -286,14 +286,30 @@ class KiddyProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = total > 0 ? (current / total).clamp(0.0, 1.0) : 0.0;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: LinearProgressIndicator(
-        value: progress,
-        backgroundColor: const Color(0xFFE5E5E5),
-        valueColor: const AlwaysStoppedAnimation(Color(0xFF58CC02)),
-        minHeight: 10,
-      ),
+    return Row(
+      children: [
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: const Color(0xFFE5E5E5),
+              valueColor: const AlwaysStoppedAnimation(Color(0xFF58CC02)),
+              minHeight: 12,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          '$current/$total',
+          style: const TextStyle(
+            fontFamily: 'Fredoka',
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF94A3B8),
+          ),
+        ),
+      ],
     );
   }
 }
