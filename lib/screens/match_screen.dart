@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../models/types.dart';
 import '../widgets/buddy_widget.dart';
+import '../firestore/providers/firestore_provider.dart';
 
 class MatchScreen extends StatefulWidget {
   final bool isChallenge;
@@ -25,8 +26,25 @@ class _MatchScreenState extends State<MatchScreen> {
     if (step?.item == null || step?.options == null)
       return const SizedBox.shrink();
 
-    final item = step!.item!;
-    final options = step.options!;
+    final firestoreProvider = context.watch<FirestoreProvider>();
+    final localItem = step!.item!;
+    final localOptions = step.options!;
+    final firestoreItems = firestoreProvider.getItemsByCategory(
+      localItem.category,
+      fallbackData: [],
+    );
+
+    final item = firestoreItems.firstWhere(
+      (element) => element.id == localItem.id,
+      orElse: () => localItem,
+    );
+
+    final options = localOptions.map((localOpt) {
+      return firestoreItems.firstWhere(
+        (element) => element.id == localOpt.id,
+        orElse: () => localOpt,
+      );
+    }).toList();
     final total = provider.lessonQueue.length;
     final current = provider.currentStepIndex + 1;
 
@@ -77,10 +95,10 @@ class _MatchScreenState extends State<MatchScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
+                      Flexible(
                         child: Text(
                           item.category == Category.alphabet
                               ? item.description
@@ -93,7 +111,7 @@ class _MatchScreenState extends State<MatchScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
                       GestureDetector(
                         onTap: () => provider.speak(
                             item.category == Category.alphabet
@@ -103,15 +121,15 @@ class _MatchScreenState extends State<MatchScreen> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1CB0F6),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                             boxShadow: const [
                               BoxShadow(
                                   color: Color(0xFF1899D6),
-                                  offset: Offset(0, 4)),
+                                  offset: Offset(0, 3)),
                             ],
                           ),
                           child: const Icon(Icons.volume_up_rounded,
-                              color: Colors.white, size: 28),
+                              color: Colors.white, size: 20),
                         ),
                       ),
                     ],
@@ -135,6 +153,7 @@ class _MatchScreenState extends State<MatchScreen> {
                           final isCorrectAnswer = opt.id == item.id;
 
                           return _TapOption(
+                            key: ValueKey('${item.id}_${opt.id}'),
                             url: opt.image,
                             label: opt.category == Category.alphabet
                                 ? opt.description
@@ -183,6 +202,13 @@ class _MatchScreenState extends State<MatchScreen> {
               ],
             ),
 
+            // Buddy in top-left
+            const Positioned(
+              top: 58,
+              right: 90,
+              child: BuddyWidget(size: 100),
+            ),
+
             // Overlays for correct/wrong
             if (answered && correct == true)
               Positioned.fill(
@@ -216,6 +242,7 @@ class _TapOption extends StatelessWidget {
   final VoidCallback onTap;
 
   const _TapOption({
+    super.key,
     required this.url,
     required this.label,
     required this.isSelected,
@@ -231,14 +258,16 @@ class _TapOption extends StatelessWidget {
     Color textColor = const Color(0xFF334155);
 
     if (isAnswered) {
-      if (isCorrectAnswer) {
-        borderColor = const Color(0xFF58CC02);
-        bgColor = const Color(0xFFDCFCE7);
-        textColor = const Color(0xFF16A34A);
-      } else if (isSelected && !isCorrectAnswer) {
-        borderColor = const Color(0xFFFF4B4B);
-        bgColor = const Color(0xFFFFF0F0);
-        textColor = const Color(0xFFDC2626);
+      if (isSelected) {
+        if (isCorrectAnswer) {
+          borderColor = const Color(0xFF1CB0F6);
+          bgColor = const Color(0xFFE0F7FF);
+          textColor = const Color(0xFF1CB0F6);
+        } else {
+          borderColor = const Color(0xFFFF4B4B);
+          bgColor = const Color(0xFFFFF0F0);
+          textColor = const Color(0xFFDC2626);
+        }
       } else {
         borderColor = const Color(0xFFE2E8F0);
         bgColor = Colors.white;
@@ -252,14 +281,13 @@ class _TapOption extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+      child: Container(
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: borderColor, width: 3),
           boxShadow: [
-            if (!isAnswered || isSelected || isCorrectAnswer)
+            if (!isAnswered || isSelected)
               BoxShadow(
                 color: borderColor,
                 offset: const Offset(0, 4),

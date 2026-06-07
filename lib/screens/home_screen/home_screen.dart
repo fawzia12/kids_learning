@@ -17,13 +17,22 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF0F9FF),
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
           children: [
-            const KiddyTopBar(),
-            Expanded(
-              child: _HomePathView(),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _DotPatternPainter(),
+              ),
             ),
-            const KiddyBottomNav(),
+            Column(
+              children: [
+                const KiddyTopBar(),
+                Expanded(
+                  child: _HomePathView(),
+                ),
+                const KiddyBottomNav(),
+              ],
+            ),
           ],
         ),
       ),
@@ -432,4 +441,25 @@ class _PathPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_PathPainter old) => false;
+}
+
+class _DotPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFCBD5E1)
+      ..style = PaintingStyle.fill;
+
+    const spacing = 24.0;
+    const radius = 1.5;
+
+    for (double x = 0; x < size.width; x += spacing) {
+      for (double y = 0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), radius, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DotPatternPainter oldDelegate) => false;
 }

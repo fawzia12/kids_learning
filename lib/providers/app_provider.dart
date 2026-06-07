@@ -10,8 +10,24 @@ import 'package:kiddylingo/data/data.dart';
 import 'dart:convert';
 
 import '../models/types.dart';
+import '../firestore/providers/firestore_provider.dart';
 
 class AppProvider extends ChangeNotifier {
+  FirestoreProvider? _firestoreProvider;
+
+  void updateFirestore(FirestoreProvider firestore) {
+    _firestoreProvider = firestore;
+    if (currentSessionCategory != null &&
+        currentSessionStepIndex != null &&
+        lessonQueue.isEmpty) {
+      final items = firestore
+          .getItemsByCategory(currentSessionCategory!, fallbackData: []);
+      if (items.isNotEmpty) {
+        startSession(currentSessionCategory!, currentSessionStepIndex!);
+      }
+    }
+  }
+
   // --- TTS ---
   final FlutterTts _tts = FlutterTts();
 
@@ -29,6 +45,7 @@ class AppProvider extends ChangeNotifier {
   List<String?> spellingSlots = [];
   List<({String char, int id, bool used})> scrambledLetters = [];
   bool spellingComplete = false;
+  bool spellingWordSpoken = false;
 
   // Match/Challenge state
   String? selectedAnswer;
@@ -72,11 +89,7 @@ class AppProvider extends ChangeNotifier {
     "Great job!"
   ];
 
-  final List<String> _wrongFeedbacks = [
-    "Try again!",
-    "You can do it!",
-    "Almost!"
-  ];
+  final List<String> _wrongFeedbacks = ["oh no!", "oh no !", " oh no ! "];
 
   AppProvider() {
     _initTts();
@@ -195,9 +208,22 @@ class AppProvider extends ChangeNotifier {
     stopSpeech();
     currentSessionCategory = category;
     currentSessionStepIndex = stepIndex;
-    final allItems = getItemsByCategory(category);
+
     final unitSteps = getUnitSteps(category);
     final stepType = unitSteps[stepIndex].type;
+
+    // learnUpper (Big Letters) and learnLower (Small Letters) always use
+    // local data.dart — Firestore is only used for learn, learnWord, match,
+    // and challenge steps.
+    final bool useFirestore = stepType == StepType.learn ||
+        stepType == StepType.learnWord ||
+        stepType == StepType.match ||
+        stepType == StepType.challenge;
+
+    final allItems = useFirestore
+        ? (_firestoreProvider?.getItemsByCategory(category, fallbackData: []) ??
+            getItemsByCategory(category))
+        : getItemsByCategory(category);
     final queue = <LessonStep>[];
     final rng = Random();
 
@@ -478,6 +504,7 @@ class AppProvider extends ChangeNotifier {
     final clean = item.name.replaceAll(' ', '').toUpperCase();
     spellingSlots = List.filled(clean.length, null);
     spellingComplete = false;
+    spellingWordSpoken = false;
 
     final letters = clean
         .split('')
@@ -506,6 +533,27 @@ class AppProvider extends ChangeNotifier {
     scrambledLetters[letterIdx] =
         (char: letter.char, id: letter.id, used: true);
 
+    // Check if the correct word is formed and play the full word sound automatically
+    if (!spellingSlots.contains(null)) {
+      final word = spellingSlots.join('');
+      final item = lessonQueue[currentStepIndex].item!;
+      final expected = item.name.replaceAll(' ', '').toUpperCase();
+      if (word == expected) {
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (!spellingWordSpoken &&
+              lessonQueue.isNotEmpty &&
+              currentStepIndex < lessonQueue.length &&
+              lessonQueue[currentStepIndex].item == item &&
+              spellingSlots.join('') == expected) {
+            spellingWordSpoken = true;
+            final spokenName =
+                item.name.length == 1 ? item.name.toLowerCase() : item.name;
+            speak(spokenName, high: true);
+          }
+        });
+      }
+    }
+
     _saveState();
     notifyListeners();
   }
@@ -524,14 +572,11 @@ class AppProvider extends ChangeNotifier {
       spellingComplete = true;
       quizCorrect = true;
 
-      final spokenName =
-          item.name.length == 1 ? item.name.toLowerCase() : item.name;
-      speak(spokenName, high: true);
-
       characterMood = 'celebrating';
       addGems(10);
       totalRightAnswers++;
       hearts += 1;
+      speakCorrect();
     } else {
       quizCorrect = false;
       speakWrong();

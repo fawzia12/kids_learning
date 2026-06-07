@@ -13,11 +13,16 @@ import 'package:kiddylingo/screens/learn_screen/learn_screen.dart';
 
 import 'providers/app_provider.dart';
 import 'models/types.dart';
-
 import 'screens/match_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'firestore/providers/firestore_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -33,8 +38,14 @@ class KiddyLingoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AppProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FirestoreProvider()..loadItems()),
+        ChangeNotifierProxyProvider<FirestoreProvider, AppProvider>(
+          create: (_) => AppProvider(),
+          update: (_, firestore, app) => app!..updateFirestore(firestore),
+        ),
+      ],
       child: MaterialApp(
         title: 'KiddyLingo Adventure',
         debugShowCheckedModeBanner: false,

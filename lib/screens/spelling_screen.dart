@@ -30,201 +30,210 @@ class SpellingScreen extends StatelessWidget {
             Positioned.fill(
               child: Column(
                 children: [
-                // Top Bar
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Color(0xFFAFAFAF)),
-                        onPressed: () => provider.goHome(),
-                      ),
-                      Expanded(
-                        child: KiddyProgressBar(current: current, total: total),
-                      ),
-                      const SizedBox(width: 16),
-                      _StatPill(
-                          emoji: '❤️',
-                          value: '${provider.hearts}',
-                          color: const Color(0xFFFF4B4B)),
-                    ],
-                  ),
-                ),
-
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Title
-                        const Text(
-                          'SPELL THE WORD!',
-                          style: TextStyle(
-                            fontFamily: 'Fredoka',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFFAFAFAF),
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Image Box
-                        Container(
-                          height: 140,
-                          width: 140,
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: const Color(0xFFE5E7EB),
-                              width: 2,
-                            ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: KiddyImage(url: item.image),
-                          ),
-                        ),
-
-                        const SizedBox(height: 48),
-
-                        // Spelling slots
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: slots.map((char) {
-                            return GestureDetector(
-                              onTap: char != null
-                                  ? provider.removeLastSpellingSlot
-                                  : null,
-                              child: _SpellingSlot(char: char),
-                            );
-                          }).toList(),
-                        ),
-
-                        const SizedBox(height: 48),
-
-                        // Scrambled letters (Floating with blue bottom line)
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 16,
-                          runSpacing: 16,
-                          children: letters.map((l) {
-                            return GestureDetector(
-                              onTap: l.used || complete
-                                  ? null
-                                  : () => provider.onSpellingLetterTap(l.id),
-                              child: Opacity(
-                                opacity: l.used ? 0.0 : 1.0,
-                                child: _FloatingLetter(char: l.char),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Bottom action bar
-                if (complete)
-                  Container(
-                    color: const Color(0xFFD7FFB8),
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Row(
-                          children: [
-                            Text(
-                              '✓',
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  color: Color(0xFF58A700),
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Well spelled!',
-                                style: TextStyle(
-                                  fontFamily: 'Fredoka',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF58A700),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        DuoButton(
-                          label: 'CONTINUE',
-                          color: const Color(0xFF58CC02),
-                          shadowColor: const Color(0xFF46A302),
-                          onTap: provider.advanceStep,
-                        ),
-                      ],
-                    ),
-                  )
-                else if (isCorrect == false)
-                  Container(
-                    color: const Color(0xFFFFE5E5),
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-                    child: const Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '✕',
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  color: Color(0xFFFF4B4B),
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Try again!',
-                                style: TextStyle(
-                                  fontFamily: 'Fredoka',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFFFF4B4B),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                else
+                  // Top Bar
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
-                    child: DuoButton(
-                      label: 'CHECK',
-                      color: isReady
-                          ? const Color(0xFF58CC02)
-                          : const Color(0xFFE5E7EB),
-                      shadowColor: isReady
-                          ? const Color(0xFF46A302)
-                          : const Color(0xFFD1D5DB),
-                      textColor:
-                          isReady ? Colors.white : const Color(0xFFAFAFAF),
-                      onTap: isReady ? provider.checkSpelling : () {},
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon:
+                              const Icon(Icons.close, color: Color(0xFFAFAFAF)),
+                          onPressed: () => provider.goHome(),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child:
+                              KiddyProgressBar(current: current, total: total),
+                        ),
+                        const SizedBox(width: 16),
+                        _StatPill(
+                            emoji: '❤️',
+                            value: '${provider.hearts}',
+                            color: const Color(0xFFFF4B4B)),
+                      ],
                     ),
                   ),
-              ],
+
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Title row with buddy on the left
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              BuddyWidget(size: 120),
+                              SizedBox(width: 12),
+                              Center(
+                                child: Text(
+                                  'SPELL THE\nWORD!',
+                                  style: TextStyle(
+                                    fontFamily: 'Fredoka',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFAFAFAF),
+                                    letterSpacing: 1.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+
+                          // Image Box – medium 180×180
+                          Container(
+                            height: 180,
+                            width: 200,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(
+                                color: const Color(0xFFE5E7EB),
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(14),
+                              child: KiddyImage(url: item.image),
+                            ),
+                          ),
+
+                          const SizedBox(height: 48),
+
+                          // Spelling slots
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: slots.map((char) {
+                              return GestureDetector(
+                                onTap: char != null
+                                    ? provider.removeLastSpellingSlot
+                                    : null,
+                                child: _SpellingSlot(char: char),
+                              );
+                            }).toList(),
+                          ),
+
+                          const SizedBox(height: 48),
+
+                          // Scrambled letters (Floating with blue bottom line)
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 16,
+                            runSpacing: 16,
+                            children: letters.map((l) {
+                              return GestureDetector(
+                                onTap: l.used || complete
+                                    ? null
+                                    : () => provider.onSpellingLetterTap(l.id),
+                                child: Opacity(
+                                  opacity: l.used ? 0.0 : 1.0,
+                                  child: _FloatingLetter(char: l.char),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Bottom action bar
+                  if (complete)
+                    Container(
+                      color: const Color(0xFFD7FFB8),
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Row(
+                            children: [
+                              Text(
+                                '✓',
+                                style: TextStyle(
+                                    fontSize: 28,
+                                    color: Color(0xFF58A700),
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Well spelled!',
+                                  style: TextStyle(
+                                    fontFamily: 'Fredoka',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF58A700),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          DuoButton(
+                            label: 'CONTINUE',
+                            color: const Color(0xFF58CC02),
+                            shadowColor: const Color(0xFF46A302),
+                            onTap: provider.advanceStep,
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (isCorrect == false)
+                    Container(
+                      color: const Color(0xFFFFE5E5),
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                      child: const Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '✕',
+                                style: TextStyle(
+                                    fontSize: 28,
+                                    color: Color(0xFFFF4B4B),
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Try again!',
+                                  style: TextStyle(
+                                    fontFamily: 'Fredoka',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFFF4B4B),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
+                      child: DuoButton(
+                        label: 'CHECK',
+                        color: isReady
+                            ? const Color(0xFF58CC02)
+                            : const Color(0xFFE5E7EB),
+                        shadowColor: isReady
+                            ? const Color(0xFF46A302)
+                            : const Color(0xFFD1D5DB),
+                        textColor:
+                            isReady ? Colors.white : const Color(0xFFAFAFAF),
+                        onTap: isReady ? provider.checkSpelling : () {},
+                      ),
+                    ),
+                ],
               ),
-            ),
-            const Positioned(
-              bottom: 120, // A bit higher to avoid overlapping with bottom bar
-              left: -20,
-              child: BuddyWidget(size: 80),
             ),
           ],
         ),
@@ -245,7 +254,8 @@ class _SpellingSlot extends StatelessWidget {
       height: 52,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6), // Empty light grey slot
+        color:
+            const Color.fromARGB(255, 219, 220, 223), // Empty light grey slot
         borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,

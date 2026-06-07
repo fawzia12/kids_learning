@@ -41,6 +41,13 @@ class _LearnScreenState extends State<LearnScreen>
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    if (provider.lessonQueue.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     final step = provider.currentStep;
     if (step?.item == null) return const SizedBox.shrink();
 
@@ -246,7 +253,7 @@ class _LearnScreenState extends State<LearnScreen>
             const Positioned(
               bottom: 80,
               left: -20,
-              child: BuddyWidget(size: 80),
+              child: BuddyWidget(size: 130),
             ),
           ],
         ),
@@ -302,7 +309,7 @@ class _LearnCard extends StatelessWidget {
     if (type == StepType.learnUpper || type == StepType.learnLower) {
       return Container(
         width: double.infinity,
-        height: 280,
+        height: 200,
         constraints: const BoxConstraints(maxWidth: 340),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -326,7 +333,7 @@ class _LearnCard extends StatelessWidget {
     }
 
     return Container(
-      width: double.infinity,
+      width: 380,
       constraints: const BoxConstraints(maxWidth: 340),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -345,10 +352,10 @@ class _LearnCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
             child: KiddyImage(
               url: item.image,
-              width: double.infinity,
+              width: 500,
               height: 180,
               fit: BoxFit.contain,
             ),
