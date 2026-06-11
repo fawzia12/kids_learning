@@ -499,14 +499,13 @@ const List<UnitStepMeta> alphabetSteps = [
   UnitStepMeta(type: StepType.learnLower, icon: 'a', label: 'Small Letters'),
   UnitStepMeta(type: StepType.learnWord, icon: '🍎', label: 'Words'),
   UnitStepMeta(type: StepType.match, icon: '🧩', label: 'Match'),
-  UnitStepMeta(type: StepType.speak, icon: '🎙️', label: 'Speak'),
 ];
 
 const List<UnitStepMeta> defaultSteps = [
   UnitStepMeta(type: StepType.learn, icon: '📖', label: 'Learn'),
   UnitStepMeta(type: StepType.match, icon: '🧩', label: 'Match'),
-  UnitStepMeta(type: StepType.speak, icon: '🎙️', label: 'Speak'),
   UnitStepMeta(type: StepType.spell, icon: '🔤', label: 'Spell'),
+  UnitStepMeta(type: StepType.story, icon: '📚', label: 'Story'),
 ];
 
 const List<String> gifts = [

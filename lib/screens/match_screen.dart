@@ -55,9 +55,14 @@ class _MatchScreenState extends State<MatchScreen> {
       _lastSpokenItemId = item.id;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          context.read<AppProvider>().speak(item.category == Category.alphabet
-              ? item.description
-              : item.name);
+          Future.delayed(const Duration(seconds: -20), () {
+            if (mounted) {
+              context.read<AppProvider>().speak(
+                  item.category == Category.alphabet
+                      ? item.description
+                      : item.name);
+            }
+          });
         }
       });
     }

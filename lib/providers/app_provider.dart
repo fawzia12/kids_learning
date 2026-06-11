@@ -64,6 +64,7 @@ class AppProvider extends ChangeNotifier {
   int streak = 0;
   int totalRightAnswers = 0;
   UserProgress userProgress = const UserProgress();
+  bool isProgressLoaded = false;
 
   // Character mood and buddy
   String characterMood = 'idle'; // idle, happy, celebrating, sad, talking
@@ -148,6 +149,66 @@ class AppProvider extends ChangeNotifier {
 
   void stopSpeech() async {
     await _tts.stop();
+    // Reset story karaoke tracking
+    if (_storyWordIndex != -1 || _storySpokenText.isNotEmpty) {
+      _storyWordIndex = -1;
+      _storySpokenText = '';
+      notifyListeners();
+    }
+  }
+
+  // --- Story karaoke TTS state ---
+  int _storyWordIndex = -1;
+  String _storySpokenText = '';
+
+  /// The 0-based index of the word currently being spoken (or -1).
+  int get currentWordIndex => _storyWordIndex;
+
+  /// The full text currently being spoken for karaoke tracking.
+  String get currentSpokenText => _storySpokenText;
+
+  /// Speaks [text] slowly with real-time word-level progress callbacks.
+  /// [wordOffset] is added to the internal word index so highlight maps
+  /// correctly when starting from a mid-page position.
+  void speakStory(String text, {int wordOffset = 0}) async {
+    await _tts.stop();
+    await _tts.setPitch(1.2);
+    await _tts.setSpeechRate(0.25);
+
+    _storySpokenText = text;
+    _storyWordIndex = wordOffset;
+    notifyListeners();
+
+    // Build character→word-index lookup from the spoken text
+    final words = text.split(RegExp(r'\s+'));
+    final starts = <int>[];
+    int pos = 0;
+    for (final w in words) {
+      starts.add(pos);
+      pos += w.length + 1; // +1 for the space
+    }
+
+    // TTS engine fires this for every word as it speaks
+    _tts.setProgressHandler(
+        (String t, int startOffset, int endOffset, String word) {
+      int idx = 0;
+      for (int i = 0; i < starts.length; i++) {
+        if (starts[i] <= startOffset) idx = i;
+      }
+      _storyWordIndex = wordOffset + idx;
+      notifyListeners();
+    });
+
+    _tts.setCompletionHandler(() {
+      // Keep the last word highlighted briefly, then clear
+      Future.delayed(const Duration(milliseconds: 600), () {
+        _storyWordIndex = -1;
+        _storySpokenText = '';
+        notifyListeners();
+      });
+    });
+
+    await _tts.speak(text);
   }
 
   // --- Persistence ---
@@ -162,6 +223,7 @@ class AppProvider extends ChangeNotifier {
     if (progressJson != null) {
       userProgress = UserProgress.fromJson(jsonDecode(progressJson));
     }
+    isProgressLoaded = true;
     notifyListeners();
     speak("Welcome back! Let's learn together!", high: true);
   }
@@ -259,11 +321,7 @@ class AppProvider extends ChangeNotifier {
               LessonStep(type: StepType.match, item: item, options: options));
         }
         break;
-      case StepType.speak:
-        for (final item in allItems) {
-          queue.add(LessonStep(type: StepType.speak, item: item));
-        }
-        break;
+
       case StepType.miniReward:
         queue.add(const LessonStep(type: StepType.miniReward));
         break;
@@ -287,6 +345,9 @@ class AppProvider extends ChangeNotifier {
           queue.add(LessonStep(
               type: StepType.challenge, item: item, options: options));
         }
+        break;
+      case StepType.story:
+        queue.add(const LessonStep(type: StepType.story));
         break;
       default:
         break;
@@ -323,13 +384,14 @@ class AppProvider extends ChangeNotifier {
         quizCorrect = null;
         selectedAnswer = null;
         break;
-      case StepType.speak:
-        currentView = AppView.speaking;
-        _speakCurrentStep(step);
-        break;
+
       case StepType.spell:
         if (step.item != null) _initSpelling(step.item!);
         currentView = AppView.spelling;
+        break;
+      case StepType.story:
+        currentView = AppView.story;
+        speak('Story time! Let\'s read together!', high: true);
         break;
       case StepType.miniReward:
         currentView = AppView.miniReward;
@@ -370,9 +432,7 @@ class AppProvider extends ChangeNotifier {
         case StepType.learn:
           speak('${item.name}. ${item.description}', fast: true);
           break;
-        case StepType.speak:
-          speak(item.name, fast: true);
-          break;
+
         default:
           speak(item.name, fast: true);
       }

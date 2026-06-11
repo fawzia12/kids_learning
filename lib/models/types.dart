@@ -9,13 +9,12 @@ enum AppView {
   quests,
   friends,
   learn,
-  speak,
   match,
-  speaking,
   spelling,
   miniReward,
   challenge,
   gift,
+  story,
 }
 
 enum StepType {
@@ -25,10 +24,10 @@ enum StepType {
   learnLower,
   learnWord,
   match,
-  speak,
   spell,
   miniReward,
   challenge,
+  story,
 }
 
 class LearningItem {

@@ -40,10 +40,105 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _HomePathView extends StatelessWidget {
+class _HomePathView extends StatefulWidget {
+  @override
+  State<_HomePathView> createState() => _HomePathViewState();
+}
+
+class _HomePathViewState extends State<_HomePathView> {
+  late final ScrollController _scrollController;
+
+  /// One GlobalKey per unit so we can measure each section's position.
+  final List<GlobalKey> _unitKeys = List.generate(
+    categoryOrder.length,
+    (_) => GlobalKey(),
+  );
+
+  final GlobalKey _activeStepKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  static bool _hasDoneFirstLaunchScroll = false;
+  bool _hasDoneMountedScroll = false;
+
+  void _checkAndScroll(AppProvider provider) {
+    if (_hasDoneMountedScroll) return;
+
+    if (provider.isProgressLoaded) {
+      _hasDoneMountedScroll = true;
+      final animate = !_hasDoneFirstLaunchScroll;
+      _hasDoneFirstLaunchScroll = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToActive(animate: animate);
+      });
+    }
+  }
+
+  Future<void> _scrollToActive({required bool animate}) async {
+    if (!mounted || !_scrollController.hasClients) return;
+
+    final provider = context.read<AppProvider>();
+    final activeIndex = provider.userProgress.completedUnitIndex
+        .clamp(0, categoryOrder.length - 1);
+
+    // Try to scroll to active step key
+    final stepCtx = _activeStepKey.currentContext;
+    if (stepCtx != null) {
+      if (animate) {
+        await Scrollable.ensureVisible(
+          stepCtx,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOutCubic,
+          alignment: 0.5, // Center the active step in the viewport
+        );
+      } else {
+        await Scrollable.ensureVisible(
+          stepCtx,
+          alignment: 0.5, // Center the active step in the viewport instantly
+        );
+      }
+    } else {
+      // Fallback to unit key
+      final unitCtx = _unitKeys[activeIndex].currentContext;
+      if (unitCtx != null) {
+        if (animate) {
+          await Scrollable.ensureVisible(
+            unitCtx,
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOutCubic,
+            alignment: 0.0, // Align unit header to top
+          );
+        } else {
+          await Scrollable.ensureVisible(
+            unitCtx,
+            alignment: 0.0, // Align unit header to top instantly
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AppProvider>();
+    _checkAndScroll(provider);
+
+    final activeUnitIndex = provider.userProgress.completedUnitIndex
+        .clamp(0, categoryOrder.length - 1);
+
     return SingleChildScrollView(
+      controller: _scrollController,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: Column(
@@ -52,9 +147,12 @@ class _HomePathView extends StatelessWidget {
             final category = entry.value;
             final meta = categoryMetadata[category]!;
             return UnitSection(
+              key: _unitKeys[unitIndex],
               category: category,
               meta: meta,
               unitIndex: unitIndex,
+              activeStepKey:
+                  unitIndex == activeUnitIndex ? _activeStepKey : null,
             );
           }).toList(),
         ),
@@ -67,11 +165,14 @@ class UnitSection extends StatelessWidget {
   final Category category;
   final CategoryMeta meta;
   final int unitIndex;
+  final GlobalKey? activeStepKey;
 
   const UnitSection({
+    super.key,
     required this.category,
     required this.meta,
     required this.unitIndex,
+    this.activeStepKey,
   });
 
   @override
@@ -203,6 +304,7 @@ class UnitSection extends StatelessWidget {
                       left: x - 28,
                       top: y - 28,
                       child: _StepNode(
+                        key: isActive ? activeStepKey : null,
                         stepMeta: step,
                         color: btnColor,
                         isActive: isActive,
@@ -216,7 +318,7 @@ class UnitSection extends StatelessWidget {
                       ),
                     ),
                   ];
-                  
+
                   // Show buddy only when this node is active
                   if (isActive) {
                     widgets.add(
@@ -227,7 +329,7 @@ class UnitSection extends StatelessWidget {
                       ),
                     );
                   }
-                  
+
                   return widgets;
                 }),
               ],
@@ -248,6 +350,7 @@ class _StepNode extends StatefulWidget {
   final VoidCallback? onTap;
 
   const _StepNode({
+    super.key,
     required this.stepMeta,
     required this.color,
     required this.isActive,

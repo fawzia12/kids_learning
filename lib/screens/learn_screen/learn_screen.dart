@@ -200,26 +200,6 @@ class _LearnScreenState extends State<LearnScreen>
                                     },
                                   ),
                                 ),
-                                const SizedBox(width: 16),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: catColor.withOpacity(0.15),
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(
-                                        color: catColor.withOpacity(0.3)),
-                                  ),
-                                  child: Text(
-                                    '/${item.phonetic}/',
-                                    style: const TextStyle(
-                                      fontFamily: 'Fredoka',
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF1E293B),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                         ],

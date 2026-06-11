@@ -5,11 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:kiddylingo/common/buddy_screen.dart';
 import 'package:kiddylingo/screens/home_screen/home_screen.dart';
 import 'package:kiddylingo/screens/letter_screen.dart';
-import 'package:kiddylingo/screens/spelling_screen.dart';
 import 'package:kiddylingo/screens/speaking_screen.dart';
+import 'package:kiddylingo/screens/spelling_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kiddylingo/screens/learn_screen/learn_screen.dart';
+import 'package:kiddylingo/screens/learn_screen/story_screen.dart';
 
 import 'providers/app_provider.dart';
 import 'models/types.dart';
@@ -101,10 +102,11 @@ class _AppRouter extends StatelessWidget {
         return const MatchScreen(key: ValueKey('match'));
       case AppView.challenge:
         return const MatchScreen(key: ValueKey('challenge'), isChallenge: true);
-      case AppView.speaking:
-        return const SpeakingScreen(key: ValueKey('speak'));
+
       case AppView.spelling:
         return const SpellingScreen(key: ValueKey('spell'));
+      case AppView.story:
+        return const StoryScreen(key: ValueKey('story'));
       case AppView.miniReward:
         return const MiniRewardScreen(key: ValueKey('reward'));
       case AppView.gift:
