@@ -81,10 +81,13 @@ class LettersScreen extends StatelessWidget {
                         final item = alphabetItems[idx];
                         final color = colors[idx % colors.length];
                         return GestureDetector(
-                          onTap: () => provider.speak(
-                            '${item.name}... is for... ${item.description}',
-                            fast: true,
-                          ),
+                          onTap: () {
+                            final cleanLetter = item.name.toLowerCase();
+                            provider.speak(
+                              cleanLetter,
+                              fast: false,
+                            );
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -99,37 +102,15 @@ class LettersScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  item.name,
-                                  style: TextStyle(
-                                    fontFamily: 'Fredoka',
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.w800,
-                                    color: color,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: KiddyImage(
-                                      url: item.image, width: 36, height: 36),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  item.description,
-                                  style: const TextStyle(
-                                    fontFamily: 'Fredoka',
-                                    fontSize: 10,
-                                    color: Color(0xFF94A3B8),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                            alignment: Alignment.center,
+                            child: Text(
+                              item.name,
+                              style: TextStyle(
+                                fontFamily: 'Fredoka',
+                                fontSize: 48,
+                                fontWeight: FontWeight.w800,
+                                color: color,
+                              ),
                             ),
                           ),
                         );

@@ -490,6 +490,8 @@ class AppProvider extends ChangeNotifier {
       return;
 
     final cats = categoryOrder;
+    if (userProgress.completedUnitIndex >= cats.length) return;
+
     final progressCat = cats[userProgress.completedUnitIndex];
 
     // Only update progress if they are playing their actual current uncompleted step
@@ -500,7 +502,7 @@ class AppProvider extends ChangeNotifier {
 
       if (nextStep >= unitSteps.length) {
         final nextUnit = userProgress.completedUnitIndex + 1;
-        if (nextUnit < cats.length) {
+        if (nextUnit <= cats.length) {
           userProgress =
               UserProgress(completedUnitIndex: nextUnit, completedStepIndex: 0);
         }

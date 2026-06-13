@@ -89,6 +89,12 @@ class _HomePathViewState extends State<_HomePathView> {
     if (!mounted || !_scrollController.hasClients) return;
 
     final provider = context.read<AppProvider>();
+
+    // If the course is completely finished, do not auto-scroll. Start at the top.
+    if (provider.userProgress.completedUnitIndex >= categoryOrder.length) {
+      return;
+    }
+
     final activeIndex = provider.userProgress.completedUnitIndex
         .clamp(0, categoryOrder.length - 1);
 
@@ -142,19 +148,79 @@ class _HomePathViewState extends State<_HomePathView> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: Column(
-          children: categoryOrder.asMap().entries.map((entry) {
-            final unitIndex = entry.key;
-            final category = entry.value;
-            final meta = categoryMetadata[category]!;
-            return UnitSection(
-              key: _unitKeys[unitIndex],
-              category: category,
-              meta: meta,
-              unitIndex: unitIndex,
-              activeStepKey:
-                  unitIndex == activeUnitIndex ? _activeStepKey : null,
-            );
-          }).toList(),
+          children: [
+            ...categoryOrder.asMap().entries.map((entry) {
+              final unitIndex = entry.key;
+              final category = entry.value;
+              final meta = categoryMetadata[category]!;
+              return UnitSection(
+                key: _unitKeys[unitIndex],
+                category: category,
+                meta: meta,
+                unitIndex: unitIndex,
+                activeStepKey: (unitIndex == activeUnitIndex &&
+                        provider.userProgress.completedUnitIndex <
+                            categoryOrder.length)
+                    ? _activeStepKey
+                    : null,
+              );
+            }),
+            if (provider.userProgress.completedUnitIndex >=
+                categoryOrder.length)
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(28),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFFC800).withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: const Color(0xFFFFC800),
+                      width: 4,
+                    ),
+                  ),
+                  child: const Column(
+                    children: [
+                      Icon(
+                        Icons.emoji_events_rounded,
+                        color: Color(0xFFFFC800),
+                        size: 80,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'COURSE COMPLETE!',
+                        style: TextStyle(
+                          fontFamily: 'Fredoka',
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFFF97316),
+                          letterSpacing: 0.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        'Thank you for stay with us.',
+                        style: TextStyle(
+                          fontFamily: 'Fredoka',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF64748B),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -319,8 +385,15 @@ class UnitSection extends StatelessWidget {
                     ),
                   ];
 
-                  // Show buddy only when this node is active
-                  if (isActive) {
+                  final isCourseComplete =
+                      provider.userProgress.completedUnitIndex >=
+                          categoryOrder.length;
+                  final isLastNodeOfCourse = isCourseComplete &&
+                      unitIndex == categoryOrder.length - 1 &&
+                      stepIdx == steps.length - 1;
+
+                  // Show buddy only when this node is active, or if it's the very last node and course is complete
+                  if (isActive || isLastNodeOfCourse) {
                     widgets.add(
                       Positioned(
                         left: -50,

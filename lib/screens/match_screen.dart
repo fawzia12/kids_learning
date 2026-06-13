@@ -207,10 +207,10 @@ class _MatchScreenState extends State<MatchScreen> {
               ],
             ),
 
-            // Buddy in top-left
+            // Buddy in top-right
             const Positioned(
               top: 58,
-              right: 90,
+              right: 20,
               child: BuddyWidget(size: 100),
             ),
 

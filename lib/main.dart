@@ -7,6 +7,7 @@ import 'package:kiddylingo/screens/home_screen/home_screen.dart';
 import 'package:kiddylingo/screens/letter_screen.dart';
 import 'package:kiddylingo/screens/speaking_screen.dart';
 import 'package:kiddylingo/screens/spelling_screen.dart';
+import 'package:kiddylingo/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kiddylingo/screens/learn_screen/learn_screen.dart';
@@ -86,8 +87,8 @@ class _AppRouter extends StatelessWidget {
 
   Widget _buildView(AppView view) {
     switch (view) {
-      // case AppView.splash:
-      //   return const SplashScreen(key: ValueKey('splash'));
+      case AppView.splash:
+        return const SplashScreen(key: ValueKey('splash'));
       case AppView.home:
         return const HomeScreen(key: ValueKey('home'));
       case AppView.letters:
